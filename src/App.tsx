@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Chart from 'chart.js/auto'; // Import Chart.js
-import { Chart as ChartJS } from 'chart.js'; // Import ChartJS type and TooltipItem for type hinting
+// Import Chart.js
+import { Chart as ChartJS } from 'chart.js/auto'; // Import ChartJS type and TooltipItem for type hinting
 import type { TooltipItem } from 'chart.js';
 
 // Define the color palette for consistent use
@@ -101,14 +101,14 @@ const KnowledgeGraph: React.FC = () => {
     { id: 'E', label: 'Emergent Behaviors', color: '#A78BFA' }, // Purple
   ];
 
-  const edges = [
+  /*const edges = [
     { from: 'A', to: 'B' },
     { from: 'B', to: 'C' },
     { from: 'C', to: 'A' },
     { from: 'C', to: 'D' },
     { from: 'D', to: 'E' },
     { from: 'A', to: 'E' },
-  ];
+  ];*/
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100 h-full flex flex-col">
