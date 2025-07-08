@@ -470,7 +470,7 @@ const App: React.FC = () => {
               <br />
               <p>The AGI Brain represents an advanced artificial general intelligence system, designed to execute complex logical operations simultaneously through robust asynchronous functionality. Engineered primarily in Python, its comprehensive knowledge base is currently managed by ChromaDB, with a strategic transition to Supabase planned for enhanced scalability and dynamic evolution. This architecture features distinct logical partitions, allowing for independent task routing across diverse subjects. The system is structured into three specialized modules: a forward-focused communication segment for human interaction, a powerful core module for intricate reasoning, automation, and integrated tool use, and a dedicated 'suites' module for specialized functions like coding, research, and skill creation. This design fundamentally optimizes the Brain for rapid advancements in AI reasoning capabilities.</p>
             <a href='https://github.com/PokePiece/AGI-Brain' target='_blank'>
-              <button className='bg-blue-700 mt-5 text-white py-2 px-4 rounded hover:bg-blue-600'>
+              <button className='bg-blue-700 mt-5 text-white cursor-pointer active:scale-95 py-2 px-4 rounded hover:bg-blue-600'>
                 View the Brain Core
               </button>
             </a>
