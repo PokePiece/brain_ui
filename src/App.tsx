@@ -462,11 +462,15 @@ const App: React.FC = () => {
 
           {/* Left Column: Input and Output */}
           <div className="lg:col-span-2 flex flex-col gap-8">
-            <div className='ml-4 mb-8'>
-              The AGI Brain is a complex system that can process and generate complex responses.
-            </div>
+            
             <InputSection onSubmit={handleSubmit} isLoading={isLoading} />
             <OutputSection output={output} />
+            <div className='ml-4 mb-8 mt-7 font-light text-gray-600'>
+              <h2 className='font-bold text-center text-2xl'>Info</h2>
+              <br />
+              The AGI Brain represents an advanced artificial general intelligence system, designed to execute complex logical operations simultaneously through robust asynchronous functionality. Engineered primarily in Python, its comprehensive knowledge base is currently managed by ChromaDB, with a strategic transition to Supabase planned for enhanced scalability and dynamic evolution. This architecture features distinct logical partitions, allowing for independent task routing across diverse subjects. The system is structured into three specialized modules: a forward-focused communication segment for human interaction, a powerful core module for intricate reasoning, automation, and integrated tool use, and a dedicated 'suites' module for specialized functions like coding, research, and skill creation. This design fundamentally optimizes the Brain for rapid advancements in AI reasoning capabilities.
+            </div>
+            <button></button>
           </div>
 
           {/* Right Column: Knowledge Graph and Task Manager */}
