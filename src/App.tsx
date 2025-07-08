@@ -34,7 +34,7 @@ interface OutputSectionProps {
 const InputSection: React.FC<InputSectionProps> = ({ onSubmit, isLoading }) => {
   const [input, setInput] = useState<string>('');
 
-  const handleSubmitClick = (): void => {
+  const handleSubmitClick = async (): Promise<void> => {
     if (input.trim()) {
       onSubmit(input);
       setInput(''); // Clear input after submission
@@ -69,7 +69,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onSubmit, isLoading }) => {
           Clear
         </button>
         <button
-          className={`${colors.accentColor.replace('#', 'bg-')} text-white px-6 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity duration-300 shadow-md flex items-center justify-center`}
+          className={`${colors.accentColor.replace('#', 'bg-')} text-black px-6 py-2 rounded-md font-semibold hover:opacity-90 transition-opacity duration-300 shadow-md flex items-center justify-center`}
           onClick={handleSubmitClick}
           disabled={isLoading}
         >
@@ -111,7 +111,7 @@ const KnowledgeGraph: React.FC = () => {
   ];*/
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100 h-full flex flex-col">
+    <div className="bg-white min-h-[600px] p-6 rounded-lg shadow-md border border-gray-100 h-full flex flex-col">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800">Knowledge Graph</h2>
       <p className="text-sm text-gray-500 mb-4">Visualizing the interconnected web of information within the AGI's understanding.</p>
       <div className="flex-grow relative bg-gray-50 rounded-md p-4 overflow-hidden flex items-center justify-center">
@@ -135,9 +135,9 @@ const KnowledgeGraph: React.FC = () => {
         ))}
         {/* Conceptual lines for edges - purely visual, not dynamic */}
         <div className="absolute inset-0 z-0 opacity-20">
-            <div className="absolute w-px h-1/2 bg-gray-400 transform rotate-45 top-1/4 left-1/4"></div>
-            <div className="absolute w-px h-1/2 bg-gray-400 transform -rotate-45 top-1/4 right-1/4"></div>
-            <div className="absolute w-px h-1/2 bg-gray-400 transform rotate-90 top-1/2 left-1/2"></div>
+          <div className="absolute w-px h-1/2 bg-gray-400 transform rotate-45 top-1/4 left-1/4"></div>
+          <div className="absolute w-px h-1/2 bg-gray-400 transform -rotate-45 top-1/4 right-1/4"></div>
+          <div className="absolute w-px h-1/2 bg-gray-400 transform rotate-90 top-1/2 left-1/2"></div>
         </div>
         <p className="text-gray-400 italic text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0">Conceptual Visualization</p>
       </div>
@@ -210,19 +210,19 @@ const TaskManager: React.FC = () => {
           display: false,
         },
         tooltip: {
-            callbacks: {
-                label: function(context: TooltipItem<'bar'>) { // Explicitly type context as TooltipItem<'bar'>
-                    let label = context.dataset.label || '';
-                    if (label) {
-                        label += ': ';
-                    }
-                    // Ensure context.parsed exists and has an x property
-                    if (context.parsed && typeof context.parsed.x === 'number') {
-                        label += context.parsed.x + '%';
-                    }
-                    return label;
-                }
+          callbacks: {
+            label: function (context: TooltipItem<'bar'>) { // Explicitly type context as TooltipItem<'bar'>
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              // Ensure context.parsed exists and has an x property
+              if (context.parsed && typeof context.parsed.x === 'number') {
+                label += context.parsed.x + '%';
+              }
+              return label;
             }
+          }
         }
       },
     };
@@ -269,7 +269,7 @@ const TaskManager: React.FC = () => {
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100 flex flex-col h-full">
       <h2 className="text-2xl font-semibold mb-4 text-gray-800">Task Manager</h2>
       <p className="text-sm text-gray-500 mb-4">Monitoring the AGI's internal processing tasks.</p>
-      
+
       <div className="mb-6">
         <h3 className="text-lg font-medium mb-2 text-gray-700">Current Tasks</h3>
         <ul className="bg-gray-50 p-4 rounded-md border border-gray-200 max-h-48 overflow-y-auto">
@@ -347,15 +347,49 @@ const App: React.FC = () => {
   const [output, setOutput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = (input: string): void => {
+  const handleSubmit = async (input: string): Promise<void> => {
     setIsLoading(true);
     setOutput(''); // Clear previous output
 
-    // Simulate AGI processing delay
-    setTimeout(() => {
-      setOutput(`AGI processed your query: "${input}".\n\nInitial analysis complete. Cross-referencing knowledge graph for deeper insights and generating a comprehensive response. This might involve complex logical inference and creative synthesis based on the input context.`);
+    try {
+      // For production
+      const res = await fetch("https://scomaton-backend.onrender.com/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ prompt: input, max_tokens: 1000, tag: "brain_interface" })
+      });
+
+      // For development
+      /*
+      const res = await fetch("http://localhost:8000/chat", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt: input, max_tokens: 1000, tag: "brain_interface" })
+      })
+      */
+
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        setOutput("Error: Invalid response format.");
+        console.warn("Raw response:", text);
+        setIsLoading(false);
+        return;
+      }
+
+      setOutput(data.response || "No valid reply field.");
+    } catch (err) {
+      setOutput("Error: Unable to reach the assistant.");
+      console.error(err);
+    } finally {
       setIsLoading(false);
-    }, 1500); // Simulate 1.5 seconds of processing
+    }
   };
 
   return (
@@ -419,19 +453,24 @@ const App: React.FC = () => {
       <div className="container mx-auto px-4 md:px-8 max-w-6xl">
         <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center text-gray-900 tracking-tight">AGI Brain Interface</h1>
         <p className="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-          Explore and interact with a conceptual interface for an Advanced General Intelligence,
+          Explore and interact with the interface for the Advanced General Intelligence,
           visualizing its input, processing, knowledge, and task management.
         </p>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+
+        <div className="grid grid-cols-1  lg:grid-cols-3 gap-8">
+
           {/* Left Column: Input and Output */}
           <div className="lg:col-span-2 flex flex-col gap-8">
+            <div className='ml-4 mb-8'>
+              The AGI Brain is a complex system that can process and generate complex responses.
+            </div>
             <InputSection onSubmit={handleSubmit} isLoading={isLoading} />
             <OutputSection output={output} />
           </div>
 
           {/* Right Column: Knowledge Graph and Task Manager */}
-          <div className="lg:col-span-1 flex flex-col gap-8">
+          <div className="lg:col-span-1  flex flex-col gap-8">
             <KnowledgeGraph />
             <TaskManager />
           </div>
